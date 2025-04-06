@@ -9,8 +9,6 @@ HuggingFace 기반의 학습도구(transformer, peft, datasets)로 제작되었�
 **준비사항**
  - 아나콘다(권장)
  - python 3.12+
- - 
- - 일정수준(고성능 컴퓨터) 이상의 사양
 
 **가이드**
 1. 다운로드 후 압축을 푼다.
