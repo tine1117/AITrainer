@@ -8,9 +8,7 @@ HuggingFace 기반의 학습도구(transformer, peft, datasets)로 제작되었�
 
 **requirements.txt**
 학습에 필요한 모듈과 API 구동 모듈을 모두 모아 놓은 파일입니다.
-"""
 pip install -f requirements.txt
-"""
 명령어로 설치하실 수 있습니다.
 
 **train.py** - 학습용 파이썬 파일 
