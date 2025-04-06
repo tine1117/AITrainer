@@ -2,6 +2,7 @@
 인공지능 학습 모듈(연습용)
 
 ![image](https://github.com/user-attachments/assets/2501d559-aada-431b-995e-48c11372ce9d)
+
 HuggingFace 기반의 학습도구(transformer, peft, datasets)로 제작되었으며, 모델은 Qwen 2.5 버전, 크기는 0.5b 기반으로 FineTuning 작업을 하는 파이썬 코드임을 알립니다.
 추후 학습에 필요한 변수는 변경 가능하도록 UI 혹은 yaml 파일로 바꿀 예정이며, 차후 데이터 모델이 충족된다면 Hugging Face으로 올릴 예정입니다.
 
