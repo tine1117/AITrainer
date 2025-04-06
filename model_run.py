@@ -3,7 +3,7 @@ import torch
 import os
 
 # device 설정 (GPU 사용 가능 시 GPU 사용)
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
 # 저장된 모델 경로
 model_path = "./server_model/storybook_model"
