@@ -1,9 +1,11 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
+model_path = "./storybook-model"
+
 # 모델 로드
-tokenizer = AutoTokenizer.from_pretrained("./storybook-model")
-model = AutoModelForCausalLM.from_pretrained("./storybook-model")
+tokenizer = AutoTokenizer.from_pretrained(model_path)
+model = AutoModelForCausalLM.from_pretrained(model_path)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
