@@ -10,9 +10,8 @@ MODEL_NAME = "Qwen/Qwen2.5-0.5B"
 LOCAL_MODEL_PATH = "./server_model/storybook_model"
 OUTPUT_DIR = "./checkpoint"
 
-# 장치 설정 (GPU 사용 가능 시 GPU 사용)
-# DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-DEVICE = "mps"
+# 장치 설정 (맥 용 MPS 혹은 Nvidia GPU 사용 가능 시 사용)
+DEVICE = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
 
 # Checkpoint 찾기 함수
 def get_last_checkpoint(output_dir):
@@ -93,7 +92,7 @@ training_args = TrainingArguments(
     save_steps=100,
     save_total_limit=5,
     learning_rate=2e-6,
-    #fp16=True,
+    fp16=True,  # 맥용으로 돌릴려면 False 혹은 주석 필요
     gradient_accumulation_steps=1,
     metric_for_best_model="eval_steps_per_second",
     warmup_ratio=0.05,
