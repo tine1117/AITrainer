@@ -9,7 +9,7 @@ def generate():
     prompt = data.get("prompt", "")
     
     if not prompt:
-        return jsonify({"error": "Prompt is required."}), 400
+        return jsonify({"오류": "프롬프트(prompt) 항목은 필수 입니다."}), 400
     
     result = generate_story(prompt)
     return jsonify({"result": result})
