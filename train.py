@@ -87,7 +87,7 @@ def compute_metrics(eval_pred):
 training_args = TrainingArguments(
     output_dir=OUTPUT_DIR,
     per_device_train_batch_size=1,
-    num_train_epochs=5,
+    num_train_epochs=100,
     logging_steps=10,
     save_steps=100,
     save_total_limit=5,
