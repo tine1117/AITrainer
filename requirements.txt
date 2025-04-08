@@ -1,5 +1,5 @@
 Flask
 torch
-transformers
+transformers==4.49.0
 peft
 datasets
