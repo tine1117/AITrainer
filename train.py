@@ -27,6 +27,39 @@ def get_last_checkpoint(output_dir):
     # 최신 checkpoint 리턴
     return max(checkpoints, key=lambda x: int(x.split('-')[-1]))
 
+def numcheck(checkpoint_name):
+    checkpoint = os.path.basename(checkpoint_name)
+    if not checkpoint.startswith("checkpoint-"):
+        # 형식이 맞지 않으면 None 반환
+        return 0
+    try:
+        # "checkpoint-" 이후의 숫자 부분 추출
+        number = int(checkpoint.split('-')[-1])
+        return number
+    except ValueError:
+        # 숫자로 변환할 수 없는 경우 None 반환
+        return 0
+
+def inputepoch(num, last_checked):
+    print(f"학습될 epoch 기본값 : {num}");
+    print(f"현재 학습된 checkpoint 값 : {last_checked}");
+    input_num = input("더 학습할 epoch 값을 입력해주세요: ")
+    # 엔터시
+    if input_num == '':
+        print("epoch 기본값으로 실행합니다.")
+        return num + last_checked
+    # 문자일 경우
+    elif not input_num.isdigit():
+        print("잘못된 값입니다. 설정한 epoch(250) 만큼 학습한 다음 종료 합니다. 나중에 다시 실행해주세요")
+        return last_checked
+    # 숫자일 경우
+    else :
+        sum = int(input_num) + last_checked
+        # 혹시모를 현변환
+        sum = int(sum)
+        print(f"{int(input_num)} epoch 값 만큼 추가 학습합니다.")
+        return sum
+
 # OUTPUT_DIR가 없으면 생성
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
@@ -35,14 +68,17 @@ last_checkpoint = get_last_checkpoint(OUTPUT_DIR)
 
 if last_checkpoint == None:
     print("✅ 체크포인트가 없습니다. 새로 학습을 시작합니다.")
+    num_of_epoch=250
 else:
     print(f"✅ 체크포인트 발견: {last_checkpoint}. 이어서 학습합니다.")
 
-    
+
 # 모델 로드
 if last_checkpoint:
     print("🔄 체크포인트에서 모델 로드 중...")
     model = AutoModelForCausalLM.from_pretrained(last_checkpoint).to(DEVICE)
+    last_epoch = numcheck(last_checkpoint)
+    num_of_epoch = inputepoch(250, last_epoch)
 else:
     print("🌱 사전 훈련된 모델 로드 중...")
     model = AutoModelForCausalLM.from_pretrained(MODEL_NAME).to(DEVICE)
@@ -87,12 +123,12 @@ def compute_metrics(eval_pred):
 training_args = TrainingArguments(
     output_dir=OUTPUT_DIR,
     per_device_train_batch_size=1,
-    num_train_epochs=100,
+    num_train_epochs=int(num_of_epoch),
     logging_steps=10,
     save_steps=100,
     save_total_limit=5,
     learning_rate=2e-6,
-    fp16=True,  # 맥 혹은 cpu용으로 돌릴려면 False 혹은 주석 필요
+    #fp16=True,  # 맥 혹은 cpu용으로 돌릴려면 False 혹은 주석 필요
     gradient_accumulation_steps=1,
     metric_for_best_model="eval_steps_per_second",
     warmup_ratio=0.05,
