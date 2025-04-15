@@ -16,7 +16,7 @@ HuggingFace 기반의 학습도구(transformer, peft, datasets)로 제작되었�
 3. ``` pip install -r requirements.txt ``` 명령어를 이용해서 설치해 준다.
 4. python *.py를 통해 파이썬 파일을 실행한다.
 
-메인에 나와있는 파일
+파일설명
  - **requirements.txt** - 학습에 필요한 모듈과 API 구동 모듈을 모두 모아 놓은 파일입니다, 
 가이드에 말한 것 처럼 ``` pip install -r requirements.txt ``` 명령어로 필요한 모듈을 모두 설치해서 쓸 수 있습니다.
 
