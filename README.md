@@ -3,7 +3,7 @@
 
 ![image](https://github.com/user-attachments/assets/2501d559-aada-431b-995e-48c11372ce9d)
 
-HuggingFace 기반의 학습도구(transformer, peft, datasets)로 제작되었으며, 모델은 Qwen 2.5 버전, 크기는 0.5b 기반으로 FineTuning 하는 코드입니다.
+HuggingFace 기반의 학습도구(transformer, peft, datasets)로 제작되었으며, 모델은 Qwen 2.5 버전, 크기는 7b 기반으로 FineTuning 하는 코드입니다.
 추후 학습에 필요한 변수는 변경 가능하도록 UI 혹은 yaml 파일로 바꿀 예정이며, 차후 데이터 모델이 충족된다면 Hugging Face으로 올릴 예정입니다.
 
 **준비사항**

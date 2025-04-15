@@ -4,14 +4,28 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, Trainer, TrainingA
 from datasets import Dataset
 from peft import LoraConfig, get_peft_model
 from data import data
-
-# 설정값
-MODEL_NAME = "Qwen/Qwen2.5-0.5B"
-LOCAL_MODEL_PATH = "./server_model/storybook_model"
-OUTPUT_DIR = "./checkpoint"
+import argparse
+import utils
 
 # 장치 설정 (맥 용 MPS 혹은 Nvidia GPU 사용 가능 시 사용)
 DEVICE = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+
+# yaml 파징
+def parse_args(args=None, namespace=None):
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-c",
+        "--config",
+        type=str,
+        required=True,
+        help="path to the config file")
+    return parser.parse_args(args=args, namespace=namespace)
+
+# parse commands
+cmd = parse_args()
+# load config
+args = utils.load_config(cmd.config)
 
 # Checkpoint 찾기 함수
 def get_last_checkpoint(output_dir):
@@ -61,14 +75,14 @@ def inputepoch(num, last_checked):
         return sum
 
 # OUTPUT_DIR가 없으면 생성
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+os.makedirs(args.train.output_dir, exist_ok=True)
 
 # 마지막 체크포인트 확인
-last_checkpoint = get_last_checkpoint(OUTPUT_DIR)
+last_checkpoint = get_last_checkpoint(args.train.output_dir)
 
 if last_checkpoint == None:
     print("✅ 체크포인트가 없습니다. 새로 학습을 시작합니다.")
-    num_of_epoch=250
+    num_of_epoch=5
 else:
     print(f"✅ 체크포인트 발견: {last_checkpoint}. 이어서 학습합니다.")
 
@@ -81,7 +95,7 @@ if last_checkpoint:
     num_of_epoch = inputepoch(250, last_epoch)
 else:
     print("🌱 사전 훈련된 모델 로드 중...")
-    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME).to(DEVICE)
+    model = AutoModelForCausalLM.from_pretrained(args.train.MODEL_NAME).to(DEVICE)
 
 # LoRA 설정 및 모델 적용
 lora_config = LoraConfig(
@@ -94,7 +108,7 @@ lora_config = LoraConfig(
 model = get_peft_model(model, lora_config)
 
 # 토크나이저 로드
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+tokenizer = AutoTokenizer.from_pretrained(args.train.MODEL_NAME)
 
 # 데이터셋 구성
 dataset = Dataset.from_list(data)
@@ -121,18 +135,18 @@ def compute_metrics(eval_pred):
 
 # 학습 설정
 training_args = TrainingArguments(
-    output_dir=OUTPUT_DIR,
-    per_device_train_batch_size=1,
+    output_dir=args.train.OUTPUT_DIR,
+    per_device_train_batch_size=args.train.batch_size,
     num_train_epochs=int(num_of_epoch),
-    logging_steps=10,
-    save_steps=100,
-    save_total_limit=5,
-    learning_rate=2e-6,
-    fp16=True,  # 맥 혹은 cpu용으로 돌릴려면 False 혹은 주석 필요
-    gradient_accumulation_steps=1,
+    logging_steps=args.train.logging_steps,
+    save_steps=args.train.save_steps,
+    save_total_limit=args.train.save_total_limit,
+    learning_rate=args.train.lr,
+    fp16=args.train.fp16,  # 맥 혹은 cpu용으로 돌릴려면 False 혹은 주석 필요
+    gradient_accumulation_steps=args.train.gradient_accumulation_steps,
     metric_for_best_model="eval_steps_per_second",
-    warmup_ratio=0.05,
-    eval_steps=50,
+    warmup_ratio=args.train.warmup_ratio,
+    eval_steps=args.train.eval_steps,
     evaluation_strategy="steps",
     save_strategy="steps",
     load_best_model_at_end=True,
@@ -151,7 +165,7 @@ trainer = Trainer(
 trainer.train(resume_from_checkpoint=last_checkpoint)
 
 # 모델 저장
-model.save_pretrained(LOCAL_MODEL_PATH)
-tokenizer.save_pretrained(LOCAL_MODEL_PATH)
+model.save_pretrained(args.train.LOCAL_MODEL_PATH)
+tokenizer.save_pretrained(args.train.LOCAL_MODEL_PATH)
 
 print("🎉 모델이 성공적으로 저장되었습니다!")

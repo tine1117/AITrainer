@@ -20,16 +20,9 @@ model = AutoModelForCausalLM.from_pretrained(model_path).to(device)
 LOCAL_MODEL_PATH = "./server_model/storybook_model"
 
 def generate_text(prompt):
-    style_prompt = f"""
-너는 어린이 동화작가야.
-따뜻하고 부드러운 문체로 쓰고, 어린이가 이해하기 쉬운 단어만 사용해.
-반드시 한국어로 작성해.
-줄글 형태로 자연스럽게 이어서 써줘.
-
-[동화 시작]
-{prompt}
-[동화 끝]
-"""
+    style_prompt = f""" 동화의 세계관은 대략 이래,
+등장인물은  빨간머리 앤이고, 줄거리는 앤이 친구 줄리아와 함께 숲으로 놀러가서 어떤 사건을 당하고 이를 파헤치고 악당을 혼쭐내는 권선징악을 주제로 하고 주인공은 빨간머리 앤이 나쁜 악당을 무찔렀으면 좋겠어
+이렇게 설정하고 세계관을 작성해줘"""
 
     inputs = tokenizer(style_prompt, return_tensors="pt").to(device)
 
