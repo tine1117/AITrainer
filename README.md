@@ -19,6 +19,7 @@ HuggingFace 기반의 학습도구(transformer, peft, datasets)로 제작되었�
 **config 적용방법**
  - config 파일은 오로지 train.py 파일으로만 사용할 수 있습니다.
  - config파일이 없으면 실행이 불가하니 이점 유의해주시기 바랍니다.
+ - 명령어 : 
 ```python train.py -c ./config/config_0.5b.yaml```
 ```python train.py -c ./config/config_7b.yaml```
 ```python train.py -c ./config/config_14b.yaml```
