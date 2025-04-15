@@ -16,6 +16,14 @@ HuggingFace 기반의 학습도구(transformer, peft, datasets)로 제작되었�
 3. ``` pip install -r requirements.txt ``` 명령어를 이용해서 설치해 준다.
 4. python *.py를 통해 파이썬 파일을 실행한다.
 
+**config 적용방법**
+config 파일은 오로지 train.py 파일으로만 사용할 수 있습니다.
+config파일이 없으면 실행이 불가하니 이점 유의해주시기 바랍니다.
+```python train.py -c ./config/config_0.5b.yaml```
+```python train.py -c ./config/config_7b.yaml```
+```python train.py -c ./config/config_14b.yaml```
+이러한 명령어로 train.py를 실행시킬수 있습니다.
+
 파일설명
  - **requirements.txt** - 학습에 필요한 모듈과 API 구동 모듈을 모두 모아 놓은 파일입니다, 
 가이드에 말한 것 처럼 ``` pip install -r requirements.txt ``` 명령어로 필요한 모듈을 모두 설치해서 쓸 수 있습니다.
