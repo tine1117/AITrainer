@@ -12,7 +12,7 @@ HuggingFace 기반의 학습도구(transformer, peft, datasets)로 제작되었�
 
 **가이드**
 1. 다운로드 후 압축을 푼다.
-2. 터미널을 통해 압축을 푼 폴더로 들어간다.
+2. cmd, ssh등을 통해 압축을 푼 폴더로 들어간다.
 3. ``` pip install -r requirements.txt ``` 명령어를 이용해서 설치해 준다.
 4. python *.py를 통해 파이썬 파일을 실행한다.
 
