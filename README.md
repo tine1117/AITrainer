@@ -25,11 +25,15 @@ HuggingFace 기반의 학습도구(transformer, peft, datasets)로 제작되었�
 
 **data.py** - 학습에 필요한 목업 데이터 파일입니다.
 
+
+
 server_model 폴더
 
 **app.py** - flask를 이용한 API 가동 파일입니다.
 
 **utils.py** - API 단에서 들어온 프롬프트를 모델으로 구동하고, 그 결과를 전달하는 파일입니다.
+
+
 
 config 폴더
 
