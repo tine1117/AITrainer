@@ -3,8 +3,8 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, Trainer, TrainingArguments, AutoConfig
 from datasets import Dataset
 from peft import LoraConfig, get_peft_model
-from data.data_all import data
 import argparse
+from data.load_json import prepare_training_data  # 데이터 준비 함수 임포트
 import utils
 
 # 장치 설정 (맥 용 MPS 혹은 Nvidia GPU 사용 가능 시 사용)
@@ -86,6 +86,29 @@ if last_checkpoint == None:
 else:
     print(f"✅ 체크포인트 발견: {last_checkpoint}. 이어서 학습합니다.")
 
+# 데이터셋 로드 및 준비
+write_style_path = args.data.write_style_path
+character_path = args.data.character_path
+story_path = args.data.story_path
+
+print("데이터셋 로드 중...")
+#dataset = prepare_training_data(write_style_path, character_path, story_path)
+dataset = Dataset.from_list(write_style_path, character_path, story_path)
+
+
+# 토크나이저 로드
+tokenizer = AutoTokenizer.from_pretrained(args.train.MODEL_NAME)
+
+# 데이터셋 전처리 함수
+def tokenize_function(example):
+    prompt = example["instruction"] + " " + example["input"]
+    inputs = tokenizer(prompt, truncation=True, padding="max_length", max_length=128)
+    labels = tokenizer(example["output"], truncation=True, padding="max_length", max_length=128)
+    inputs["labels"] = labels["input_ids"]
+    return inputs
+
+tokenized_dataset = dataset.map(tokenize_function, batched=True)
+split_data = tokenized_dataset.train_test_split(test_size=0.0003)
 
 # 모델 로드
 if last_checkpoint:
@@ -107,23 +130,6 @@ lora_config = LoraConfig(
 )
 model = get_peft_model(model, lora_config)
 
-# 토크나이저 로드
-tokenizer = AutoTokenizer.from_pretrained(args.train.MODEL_NAME)
-
-# 데이터셋 구성
-dataset = Dataset.from_list(data)
-split_data = dataset.train_test_split(test_size=0.0003)
-
-def tokenize_function(example):
-    prompt = example["instruction"] + " " + example["input"]
-    inputs = tokenizer(prompt, truncation=True, padding="max_length", max_length=128)
-    labels = tokenizer(example["output"], truncation=True, padding="max_length", max_length=128)
-    inputs["labels"] = labels["input_ids"]
-    return inputs
-
-tokenized_train_dataset = split_data["train"].map(tokenize_function)
-tokenized_val_dataset = split_data["test"].map(tokenize_function)
-
 # 평가 지표 계산 함수
 def compute_metrics(eval_pred):
     logits, labels = eval_pred
@@ -135,7 +141,7 @@ def compute_metrics(eval_pred):
 
 # 학습 설정
 training_args = TrainingArguments(
-    output_dir=args.train.OUTPUT_DIR,
+    output_dir=args.train.output_dir,
     per_device_train_batch_size=args.train.batch_size,
     num_train_epochs=int(num_of_epoch),
     logging_steps=args.train.logging_steps,
@@ -156,8 +162,8 @@ training_args = TrainingArguments(
 trainer = Trainer(
     model=model,
     args=training_args,
-    train_dataset=tokenized_train_dataset,
-    eval_dataset=tokenized_val_dataset,
+    train_dataset=split_data["train"],
+    eval_dataset=split_data["test"],
     compute_metrics=compute_metrics,
 )
 
