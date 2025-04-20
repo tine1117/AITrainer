@@ -18,7 +18,7 @@ HuggingFace 기반의 학습도구(transformer, peft, datasets)로 제작되었�
 
 **config 적용방법**
  - config 파일은 오로지 train.py 파일으로만 사용할 수 있습니다.
- - config파일이 없으면 실행이 불가하니 이점 유의해주시기 바랍니다.
+ - train.py 파일은 config파일이 없으면 실행이 불가하니 이점 유의해주시기 바랍니다.
  - 명령어 : 
 ```python train.py -c ./config/config_0.5b.yaml```
 ```python train.py -c ./config/config_7b.yaml```
@@ -33,17 +33,27 @@ HuggingFace 기반의 학습도구(transformer, peft, datasets)로 제작되었�
 
  - **model_run.py** - 학습 완료시 모델을 구동 가능하게 하는 파이썬 모델입니다.
 
- - **data.py** - 학습에 필요한 목업 데이터 파일입니다.
+ - **train_beta.py** - (테스트중)차세대 코드가 포함된 학습파일입니다.
 
+data폴더
 
+ - **data_all.py** - 학습에 필요한 목업 데이터 파일입니다.
+
+ - **load_json.py** - (테스트중)json 파일을 파이썬이 지원하는 데이터셋으로 바꿔주는 함수가 집약된 파이썬 파일입니다.
+
+json_files 폴더
+
+ - **character.json** - 각 인물의 성격을 구체적으로 구현하는데 도움이 되도록 등장인물의 상세정보를 모두 집약시킨 데이터셋 파일입니다.
+   
+ - **story.json** - 각 제목과 줄거리, 태그를 원활하게 생성하도록 도움을 주는 데이터셋 파일입니다.
+
+ - **write_style.json** - 동화가 생성될때 문체를 학습시키도록 유도하고 도움을 주는 데이터셋 파일입니다.
 
 server_model 폴더
 
  - **app.py** - flask를 이용한 API 가동 파일입니다.
 
  - **utils.py** - API 단에서 들어온 프롬프트를 모델으로 구동하고, 그 결과를 전달하는 파일입니다.
-
-
 
 config 폴더
 
