@@ -1,10 +1,8 @@
 import json
 from datasets import Dataset
 
+# JSON 파일을 로드하고 변환하는 함수
 def load_and_convert_json(file_path):
-    """
-    JSON 파일을 로드하고 HuggingFace의 Dataset 형식으로 변환합니다.
-    """
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
@@ -39,10 +37,8 @@ def load_and_convert_json(file_path):
         print(f"JSON 파일을 디코딩하는 중 오류가 발생했습니다: {file_path}")
         raise
 
+# 여러 데이터셋을 결합하는 함수
 def combine_datasets(*datasets):
-    """
-    여러 데이터셋을 하나로 결합합니다.
-    """
     combined_data = []
     for dataset in datasets:
         for item in dataset:
@@ -53,10 +49,8 @@ def combine_datasets(*datasets):
             })
     return Dataset.from_list(combined_data)
 
+# 훈련 데이터 준비 함수
 def prepare_training_data(write_style_path, character_path, story_path):
-    """
-    동화 스타일, 캐릭터, 스토리 데이터를 로드하고 결합하여 학습용 데이터셋을 준비합니다.
-    """
     # 각 JSON 파일 로드
     write_style_dataset = load_and_convert_json(write_style_path)
     character_dataset = load_and_convert_json(character_path)
